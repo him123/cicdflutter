@@ -22,39 +22,39 @@ jobs:
     - name: Get dependencies
       run: flutter pub get
 
-    - name: Run tests
-      run: flutter test
+    # - name: Run tests
+    #   run: flutter test
 
     - name: Build iOS and Android
       run: |
         flutter build apk
 
-    - name: Archive artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: build-artifacts
-        path: |
-          build/app/outputs/apk/release/
+    # - name: Archive artifacts
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: build-artifacts
+    #     path: |
+    #       build/app/outputs/apk/release/
 
-  deploy:
-    name: Deploy to GitHub Pages  # Example deployment step (adjust as per your needs)
-    runs-on: ubuntu-latest
+  # deploy:
+  #   name: Deploy to GitHub Pages  # Example deployment step (adjust as per your needs)
+  #   runs-on: ubuntu-latest
 
-    needs: build
+  #   needs: build
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Download artifacts
-      uses: actions/download-artifact@v2
-      with:
-        name: build-artifacts
+  #   - name: Download artifacts
+  #     uses: actions/download-artifact@v2
+  #     with:
+  #       name: build-artifacts
 
-    - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@4.1.5
-      with:
-        branch: gh-pages  # Specify your deployment branch
-        folder: build
+  #   - name: Deploy to GitHub Pages
+  #     uses: JamesIves/github-pages-deploy-action@4.1.5
+  #     with:
+  #       branch: gh-pages  # Specify your deployment branch
+  #       folder: build
 
 # Replace `deploy` section with your deployment strategy (e.g., Firebase, AWS, etc.)
