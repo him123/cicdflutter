@@ -27,7 +27,6 @@ jobs:
 
     - name: Build iOS and Android
       run: |
-        flutter build ios --release
         flutter build apk --release
 
     - name: Archive artifacts
@@ -35,7 +34,6 @@ jobs:
       with:
         name: build-artifacts
         path: |
-          build/ios/      # Adjust paths based on your project structure
           build/app/outputs/apk/release/
 
   deploy:
