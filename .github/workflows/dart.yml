@@ -1,49 +1,62 @@
+name: Dart CI/CD
+
 on:
-  pull_request:
-    branches:
-      - main
-      - master
   push:
     branches:
-      - main
-      - master
-      - develop
-name: "Build & Release"
+      - main  # Adjust branch name as per your default branch
+
 jobs:
   build:
-    name: Build & Release
-    runs-on: macos-latest
+    name: Build and Test
+    runs-on: macos-latest  # Make sure to use macOS runner since your project is on a Mac Mini
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '12'
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          architecture: x64
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - run: flutter build apk --release --split-per-abi
-      - run: |
-          flutter build ios --no-codesign
-          cd build/ios/iphoneos
-          mkdir Payload
-          cd Payload
-          ln -s ../Runner.app
-          cd ..
-          zip -r app.ipa Payload
-      - name: Push to Releases
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa"
-          tag: v1.0.${{ github.run_number }}
-          token: ${{ secrets.TOKEN }}
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.22.2'  # Replace with your desired Flutter version
 
+    - name: Get dependencies
+      run: flutter pub get
 
+    - name: Run tests
+      run: flutter test
 
+    - name: Build iOS and Android
+      run: |
+        flutter build ios --release
+        flutter build apk --release
 
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-artifacts
+        path: |
+          build/ios/      # Adjust paths based on your project structure
+          build/app/outputs/apk/release/
 
+  deploy:
+    name: Deploy to GitHub Pages  # Example deployment step (adjust as per your needs)
+    runs-on: ubuntu-latest
 
-# push to master, main, develop
-# pull request on main master
+    needs: build
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: build-artifacts
+
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@4.1.5
+      with:
+        branch: gh-pages  # Specify your deployment branch
+        folder: build
+
+# Replace `deploy` section with your deployment strategy (e.g., Firebase, AWS, etc.)
