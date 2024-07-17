@@ -27,7 +27,7 @@ jobs:
 
     - name: Build iOS and Android
       run: |
-        flutter build apk --release
+        flutter build apk
 
     - name: Archive artifacts
       uses: actions/upload-artifact@v2
